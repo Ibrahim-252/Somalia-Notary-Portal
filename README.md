@@ -1,4 +1,4 @@
-# Daftarka — Somalia Notary System Portal
+# Daftarka - Somalia Notary System Portal
 
 A clean, modern web portal for Somali notary offices to register, log in, and manage their documents digitally. Built with plain HTML, CSS, and JavaScript,no frameworks, no build tools, no server required.
 
