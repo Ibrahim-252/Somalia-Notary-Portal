@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Daftarka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/style.css" />
+</head>
+<body class="dashboard-page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="index.html" class="nav-logo sidebar-logo">
+      <span class="logo-mark">D</span>
+      <span class="logo-text">Daftarka</span>
+    </a>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link active">
+        <span class="sidebar-icon">🏠</span> Overview
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="sidebar-icon">📄</span> Documents
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="sidebar-icon">➕</span> Submit New
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="sidebar-icon">⚙️</span> Settings
+      </a>
+    </nav>
+    <button class="btn-logout" id="logout-btn">
+      <span>→</span> Log out
+    </button>
+  </aside>       
+
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-main">
+
+    <!-- TOPBAR -->
+    <header class="dash-topbar">
+      <div class="dash-topbar-left">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle menu">☰</button>
+        <div>
+          <h1 class="dash-greeting" id="dash-greeting">Good morning 👋</h1>
+          <p class="dash-office-name" id="dash-office-name">Loading…</p>
+        </div>
+      </div>
+      <div class="dash-topbar-right">
+        <div class="dash-avatar" id="dash-avatar">—</div>
+      </div>
+    </header>
+
+    <!-- STATS ROW -->
+    <section class="dash-stats">
+      <div class="stat-card">
+        <div class="stat-icon">📄</div>
+        <div class="stat-body">
+          <span class="stat-label">Documents submitted</span>
+          <strong class="stat-value" id="stat-total">0</strong>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-body">
+          <span class="stat-label">Verified</span>
+          <strong class="stat-value" id="stat-verified">0</strong>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-body">
+          <span class="stat-label">Pending</span>
+          <strong class="stat-value" id="stat-pending">0</strong>
+        </div>
+      </div>
+      <div class="stat-card stat-card-accent">
+        <div class="stat-icon">📅</div>
+        <div class="stat-body">
+          <span class="stat-label">Member since</span>
+          <strong class="stat-value stat-value-sm" id="stat-since">—</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADD DOCUMENT BANNER -->
+    <section class="add-doc-banner">
+      <div class="add-doc-banner-text">
+        <h3>Ready to submit a document?</h3>
+        <p>Add a new record to your notary registry in under a minute.</p>
+      </div>
+      <button class="btn btn-primary" id="add-doc-btn">+ Submit new document</button>
+    </section>
+
+    <!-- DOCUMENT LIST -->
+    <section class="doc-list-section">
+      <div class="doc-list-header">
+        <h2>Recent documents</h2>
+        <input type="text" class="doc-search" id="doc-search" placeholder="🔍  Search documents…" />
+      </div>
+      <div id="doc-list-body">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADD DOCUMENT MODAL -->
+  <div class="modal-overlay" id="modal-overlay" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Submit New Document</h3>
+        <button class="modal-close" id="modal-close">✕</button>
+      </div>
+      <form id="add-doc-form" novalidate>
+        <div class="form-group">
+          <label for="doc-title">Document Title</label>
+          <input type="text" id="doc-title" placeholder="e.g. Land Transfer Agreement" />
+          <span class="field-error" id="err-doc-title"></span>
+        </div>
+        <div class="form-row form-row-two">
+          <div class="form-group">
+            <label for="doc-type">Document Type</label>
+            <select id="doc-type">
+              <option value="">Select type…</option>
+              <option value="Land Transfer">Land Transfer</option>
+              <option value="Power of Attorney">Power of Attorney</option>
+              <option value="Business Registration">Business Registration</option>
+              <option value="Will & Testament">Will & Testament</option>
+              <option value="Contract">Contract</option>
+              <option value="Other">Other</option>
+            </select>
+            <span class="field-error" id="err-doc-type"></span>
+          </div>
+          <div class="form-group">
+            <label for="doc-date">Date</label>
+            <input type="date" id="doc-date" />
+            <span class="field-error" id="err-doc-date"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="doc-parties">Parties Involved</label>
+          <input type="text" id="doc-parties" placeholder="e.g. Ahmed Omar, Fatima Hassan" />
+          <span class="field-error" id="err-doc-parties"></span>
+        </div>
+        <div class="form-group">
+          <label for="doc-notes">Notes <span class="optional">(optional)</span></label>
+          <textarea id="doc-notes" rows="3" placeholder="Any additional information…"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit document</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../scripts/storage.js"></script>
+  <script src="../scripts/dashboard.js"></script>
+</body>
+</html>

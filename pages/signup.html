@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up — Daftarka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/style.css" />
+</head>
+<body class="auth-page">
+
+  <div class="auth-layout">
+
+    <!-- LEFT PANEL -->
+    <div class="auth-panel auth-panel-left">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-mark">D</span>
+        <span class="logo-text">Daftarka</span>
+      </a>
+      <div class="auth-panel-body">
+        <h2 class="auth-panel-title">Join hundreds of offices going digital</h2>
+        <ul class="auth-benefits">
+          <li>
+            <span class="benefit-icon">✓</span>
+            <span>Secure document registry for your office</span>
+          </li>
+          <li>
+            <span class="benefit-icon">✓</span>
+            <span>Instant search across all your records</span>
+          </li>
+          <li>
+            <span class="benefit-icon">✓</span>
+            <span>No paper, no lost files, no headaches</span>
+          </li>
+          <li>
+            <span class="benefit-icon">✓</span>
+            <span>Free for all Somali notary offices</span>
+          </li>
+        </ul>
+      </div>
+      <div class="auth-panel-quote">
+        <p>"Finally, a system built for how we actually work."</p>
+        <span>— Office Director, Mogadishu</span>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL — FORM -->
+    <div class="auth-panel auth-panel-right">
+      <div class="auth-form-wrap">
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-sub">Register your notary office on Daftarka.</p>
+
+        <div id="form-error" class="form-message form-message-error" style="display:none;"></div>
+        <div id="form-success" class="form-message form-message-success" style="display:none;"></div>
+
+        <form id="signup-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="office-name">Office Name</label>
+              <input type="text" id="office-name" placeholder="e.g. Mogadishu Central Notary" autocomplete="organization" />
+              <span class="field-error" id="err-office-name"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contact-person">Contact Person</label>
+              <input type="text" id="contact-person" placeholder="Full name" autocomplete="name" />
+              <span class="field-error" id="err-contact-person"></span>
+            </div>
+          </div>
+
+          <div class="form-row form-row-two">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="you@office.so" autocomplete="email" />
+              <span class="field-error" id="err-email"></span>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" placeholder="+252 6X XXX XXXX" autocomplete="tel" />
+              <span class="field-error" id="err-phone"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="password">Password</label>
+              <div class="input-with-toggle">
+                <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password" />
+                <button type="button" class="toggle-password" data-target="password" aria-label="Toggle password">👁</button>
+              </div>
+              <span class="field-error" id="err-password"></span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full btn-lg" id="submit-btn">
+            <span id="btn-label">Create account</span>
+            <span id="btn-spinner" class="spinner" style="display:none;"></span>
+          </button>
+        </form>
+
+        <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../scripts/storage.js"></script>
+  <script src="../scripts/signup.js"></script>
+</body>
+</html>
