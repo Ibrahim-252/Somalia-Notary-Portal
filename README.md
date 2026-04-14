@@ -2,6 +2,8 @@
 
 A clean, modern web portal for Somali notary offices to register, log in, and manage their documents digitally. Built with plain HTML, CSS, and JavaScript,no frameworks, no build tools, no server required.
 
+**Last updated: April 14, 2026**
+
 ## What It Is
 
 Daftarka replaces paper logbooks and scattered physical files with a simple digital registry. Notary offices sign up once, then use the portal to submit and track documents from any browser.
