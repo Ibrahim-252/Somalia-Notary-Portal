@@ -7,6 +7,7 @@
  *  - PDF upload field in the modal — files go to IndexedDB (see file-storage.js)
  *  - When a PDF is uploaded, status flips to 'Verified' automatically
  *  - Document rows show a "View PDF" link if a file is attached
+ *  - Reference numbers (DAF-2026-0001) shown on every doc, click to copy, searchable
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -57,13 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- SIDEBAR ----
 
   function wireSidebar() {
-    // Match by data-nav attribute on each sidebar link.
-    // Add these in dashboard.html:
-    //   <a data-nav="overview">Overview</a>
-    //   <a data-nav="documents">Documents</a>
-    //   <a data-nav="submit">Submit New</a>
-    //   <a data-nav="settings">Settings</a>
-
     const links = document.querySelectorAll('[data-nav]');
     links.forEach(link => {
       link.addEventListener('click', (e) => {
@@ -72,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         switch (target) {
           case 'overview':
-            // Already here — just scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
             break;
           case 'documents':
@@ -128,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const all  = Storage.getDocumentsByOffice(office.id);
     const docs = searchQuery
       ? all.filter(d =>
+          (d.reference || '').toLowerCase().includes(searchQuery) ||
           d.title.toLowerCase().includes(searchQuery)   ||
           d.type.toLowerCase().includes(searchQuery)    ||
           d.parties.toLowerCase().includes(searchQuery)
@@ -141,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="doc-empty">
           <div class="empty-icon">${searchQuery ? '🔍' : '📂'}</div>
           <h3>${searchQuery ? 'No documents match your search.' : 'No documents yet.'}</h3>
-          <p>${searchQuery ? 'Try a different keyword.' : 'Submit your first document to get started.'}</p>
+          <p>${searchQuery ? 'Try a different keyword or reference number.' : 'Submit your first document to get started.'}</p>
         </div>
       `;
       return;
@@ -152,6 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rows = sorted.map(doc => `
       <tr>
+        <td>
+          <button class="ref-chip" data-copy-ref="${escapeHtml(doc.reference || '')}" title="Click to copy">
+            ${escapeHtml(doc.reference || '—')}
+          </button>
+        </td>
         <td>
           <strong>${escapeHtml(doc.title)}</strong>
           ${doc.notes ? `<br><small style="color:var(--ink-soft);">${escapeHtml(doc.notes)}</small>` : ''}
@@ -177,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <table class="doc-table">
           <thead>
             <tr>
+              <th>Ref. No.</th>
               <th>Title</th>
               <th>Type</th>
               <th>Parties</th>
@@ -192,21 +192,46 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    // Wire the View PDF and Upload PDF buttons
-    container.querySelectorAll('[data-view-pdf]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        FileStorage.openFile(btn.dataset.viewPdf);
-      });
+    // Wire copy-reference buttons
+    container.querySelectorAll('[data-copy-ref]').forEach(btn => {
+      btn.addEventListener('click', () => copyReference(btn));
     });
 
+    // Wire View PDF / Upload PDF buttons
+    container.querySelectorAll('[data-view-pdf]').forEach(btn => {
+      btn.addEventListener('click', () => FileStorage.openFile(btn.dataset.viewPdf));
+    });
     container.querySelectorAll('[data-upload-pdf]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        triggerInlineUpload(btn.dataset.uploadPdf);
-      });
+      btn.addEventListener('click', () => triggerInlineUpload(btn.dataset.uploadPdf));
     });
   }
 
-  // ---- INLINE UPLOAD (for rows without a PDF yet) ----
+  // ---- COPY REFERENCE ----
+
+  function copyReference(btn) {
+    const ref = btn.dataset.copyRef;
+    if (!ref) return;
+    navigator.clipboard.writeText(ref).then(() => {
+      const original = btn.textContent;
+      btn.textContent = '✓ Copied';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = original.trim();
+        btn.classList.remove('copied');
+      }, 1200);
+    }).catch(() => {
+      // Fallback for older browsers
+      const tmp = document.createElement('textarea');
+      tmp.value = ref;
+      document.body.appendChild(tmp);
+      tmp.select();
+      document.execCommand('copy');
+      document.body.removeChild(tmp);
+      alert('Copied: ' + ref);
+    });
+  }
+
+  // ---- INLINE UPLOAD ----
 
   function triggerInlineUpload(docId) {
     const input = document.createElement('input');
@@ -236,6 +261,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function openModal() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('doc-date').value = today;
+
+    // Preview the reference number this doc would get
+    const previewEl = document.getElementById('doc-ref-preview');
+    if (previewEl) {
+      previewEl.textContent = Storage.nextReference(office.id);
+    }
+
     document.getElementById('modal-overlay').style.display = 'flex';
     document.body.style.overflow = 'hidden';
   }
@@ -263,30 +295,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let hasError = false;
 
-    if (!title) {
-      showModalError('doc-title', 'Please enter the document title.');
-      hasError = true;
-    }
-    if (!type) {
-      showModalError('doc-type', 'Please select a document type.');
-      hasError = true;
-    }
-    if (!date) {
-      showModalError('doc-date', 'Please select a date.');
-      hasError = true;
-    }
-    if (!parties) {
-      showModalError('doc-parties', 'Please enter the parties involved.');
-      hasError = true;
-    }
+    if (!title)   { showModalError('doc-title',   'Please enter the document title.'); hasError = true; }
+    if (!type)    { showModalError('doc-type',    'Please select a document type.');   hasError = true; }
+    if (!date)    { showModalError('doc-date',    'Please select a date.');            hasError = true; }
+    if (!parties) { showModalError('doc-parties', 'Please enter the parties involved.'); hasError = true; }
     if (file && file.type !== 'application/pdf') {
       showModalError('doc-file', 'Only PDF files are accepted.');
       hasError = true;
     }
-
     if (hasError) return;
 
-    // Create the document record. If a PDF was uploaded, mark as Verified.
     const docPayload = {
       title, type, date, parties, notes,
       hasFile: !!file,
@@ -295,7 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const newDoc = Storage.addDocument(office.id, docPayload);
 
-    // Save the PDF to IndexedDB if one was provided
     if (file && newDoc && newDoc.id) {
       try {
         await FileStorage.saveFile(newDoc.id, file);
@@ -309,11 +326,31 @@ document.addEventListener('DOMContentLoaded', () => {
     closeModal();
     refreshDashboard();
 
+    // Show the assigned reference as a quick toast
+    if (newDoc && newDoc.reference) {
+      showToast(`Document saved as ${newDoc.reference}`);
+    }
+
     // Flash the stats section
     const statsEl = document.querySelector('.dash-stats');
     statsEl.style.transition = 'opacity .2s';
     statsEl.style.opacity = '.5';
     setTimeout(() => statsEl.style.opacity = '1', 300);
+  }
+
+  // ---- TOAST ----
+
+  function showToast(message) {
+    let toast = document.getElementById('daftarka-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'daftarka-toast';
+      toast.className = 'daftarka-toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2400);
   }
 
   // ---- HELPERS ----
@@ -338,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function escapeHtml(str) {
     if (!str) return '';
-    return str
+    return String(str)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')

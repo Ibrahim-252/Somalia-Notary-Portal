@@ -45,10 +45,6 @@ const Storage = (() => {
     return newOffice;
   }
 
-  /**
-   * Updates an office record. Pass any subset of fields.
-   * Returns the updated office, or null if not found.
-   */
   function updateOffice(officeId, updates) {
     const offices = getOffices();
     const i = offices.findIndex(o => o.id === officeId);
@@ -73,10 +69,31 @@ const Storage = (() => {
     return getDocuments().filter(d => d.officeId === officeId);
   }
 
+  /**
+   * Generates the next reference number for an office.
+   * Format: DAF-YYYY-NNNN where NNNN resets each year, per office.
+   * Example: DAF-2026-0001, DAF-2026-0002, …, DAF-2027-0001
+   */
+  function nextReference(officeId) {
+    const year = new Date().getFullYear();
+    const prefix = `DAF-${year}-`;
+
+    // Find the highest existing number for this office + year
+    const existing = getDocumentsByOffice(officeId)
+      .map(d => d.reference)
+      .filter(r => r && r.startsWith(prefix))
+      .map(r => parseInt(r.slice(prefix.length), 10))
+      .filter(n => !isNaN(n));
+
+    const next = existing.length === 0 ? 1 : Math.max(...existing) + 1;
+    return `${prefix}${String(next).padStart(4, '0')}`;
+  }
+
   function addDocument(officeId, docData) {
     const docs = getDocuments();
     const newDoc = {
       id:        'doc_' + Date.now(),
+      reference: nextReference(officeId),
       officeId,
       title:     docData.title,
       type:      docData.type,
@@ -92,11 +109,6 @@ const Storage = (() => {
     return newDoc;
   }
 
-  /**
-   * Updates a single document by id. Pass any subset of fields
-   * (e.g. { status: 'Verified', hasFile: true }).
-   * Returns the updated document, or null if not found.
-   */
   function updateDocument(docId, updates) {
     const docs = getDocuments();
     const i = docs.findIndex(d => d.id === docId);
@@ -140,6 +152,7 @@ const Storage = (() => {
     getDocumentsByOffice,
     addDocument,
     updateDocument,
+    nextReference,
     setSession,
     getSession,
     clearSession,

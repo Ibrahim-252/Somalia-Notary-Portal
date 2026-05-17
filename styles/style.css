@@ -1590,3 +1590,100 @@ img, svg { display: block; max-width: 100%; }
     gap: 8px;
   }
 }
+
+/* ============================================================
+   REFERENCE NUMBER STYLING — append to end of style.css
+   ============================================================ */
+
+/* The clickable reference chip in document tables */
+.ref-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--sand);
+  border: 1px solid var(--sand-dark);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  transition: all var(--transition);
+}
+
+.ref-chip:hover {
+  background: var(--cream);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.ref-chip.copied {
+  background: var(--green-pale);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* Reference preview inside the modal */
+.ref-preview-row {
+  background: var(--sand);
+  border: 1px dashed var(--sand-dark);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ref-preview-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.ref-preview-value {
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: .02em;
+}
+
+/* Toast: appears bottom-right after saving a document */
+.daftarka-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--ink);
+  color: var(--sand);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.daftarka-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .daftarka-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    text-align: center;
+  }
+}

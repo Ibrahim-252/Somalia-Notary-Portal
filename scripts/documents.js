@@ -1,6 +1,7 @@
 /**
  * documents.js
  * Full documents list page with filters.
+ * Reference numbers are shown, copyable, and searchable.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,12 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', (e) => {
       const target = link.getAttribute('data-nav');
       if (target === 'submit') {
-        // Bounce to dashboard with a query string the dashboard could read
-        // For now, just go to dashboard — user can hit "Submit new document"
         e.preventDefault();
         window.location.href = 'dashboard.html?action=submit';
       }
-      // Other links use their natural href
     });
   });
 
@@ -57,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (search) {
       docs = docs.filter(d =>
+        (d.reference || '').toLowerCase().includes(search) ||
         d.title.toLowerCase().includes(search)   ||
         (d.notes || '').toLowerCase().includes(search) ||
         d.parties.toLowerCase().includes(search)
@@ -77,13 +76,18 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="doc-empty">
           <div class="empty-icon">🔍</div>
           <h3>No documents match these filters.</h3>
-          <p>Try clearing some filters or adding a new document.</p>
+          <p>Try clearing some filters, or search by reference number.</p>
         </div>`;
       return;
     }
 
     const rows = docs.map(doc => `
       <tr>
+        <td>
+          <button class="ref-chip" data-copy-ref="${escapeHtml(doc.reference || '')}" title="Click to copy">
+            ${escapeHtml(doc.reference || '—')}
+          </button>
+        </td>
         <td>
           <strong>${escapeHtml(doc.title)}</strong>
           ${doc.notes ? `<br><small style="color:var(--ink-soft);">${escapeHtml(doc.notes)}</small>` : ''}
@@ -108,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <table class="doc-table">
           <thead>
             <tr>
+              <th>Ref. No.</th>
               <th>Title</th><th>Type</th><th>Parties</th>
               <th>Date</th><th>Status</th><th>File</th>
             </tr>
@@ -116,11 +121,36 @@ document.addEventListener('DOMContentLoaded', () => {
         </table>
       </div>`;
 
+    container.querySelectorAll('[data-copy-ref]').forEach(btn => {
+      btn.addEventListener('click', () => copyReference(btn));
+    });
     container.querySelectorAll('[data-view-pdf]').forEach(btn => {
       btn.addEventListener('click', () => FileStorage.openFile(btn.dataset.viewPdf));
     });
     container.querySelectorAll('[data-upload-pdf]').forEach(btn => {
       btn.addEventListener('click', () => triggerUpload(btn.dataset.uploadPdf));
+    });
+  }
+
+  function copyReference(btn) {
+    const ref = btn.dataset.copyRef;
+    if (!ref) return;
+    navigator.clipboard.writeText(ref).then(() => {
+      const original = btn.textContent.trim();
+      btn.textContent = '✓ Copied';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('copied');
+      }, 1200);
+    }).catch(() => {
+      const tmp = document.createElement('textarea');
+      tmp.value = ref;
+      document.body.appendChild(tmp);
+      tmp.select();
+      document.execCommand('copy');
+      document.body.removeChild(tmp);
+      alert('Copied: ' + ref);
     });
   }
 
@@ -153,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function escapeHtml(s) {
-    return (s || '')
+    return String(s || '')
       .replace(/&/g,'&amp;').replace(/</g,'&lt;')
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }

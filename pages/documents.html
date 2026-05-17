@@ -23,7 +23,7 @@
       <a href="dashboard.html" data-nav="overview" class="sidebar-link">
         <span class="sidebar-icon">🏠</span> Overview
       </a>
-      <a href="documents.html" data-nav="documents" class="sidebar-link">
+      <a href="documents.html" data-nav="documents" class="sidebar-link active">
         <span class="sidebar-icon">📄</span> Documents
       </a>
       <a href="#" data-nav="submit" class="sidebar-link">
@@ -41,18 +41,23 @@
   <!-- MAIN -->
   <main class="dashboard-main">
     <header class="dash-topbar">
-      <div>
-        <h2 class="dash-page-title">All Documents</h2>
-        <p class="dash-page-sub" id="dash-office-name">—</p>
+      <div class="dash-topbar-left">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle menu">☰</button>
+        <div>
+          <h2 class="dash-page-title">All Documents</h2>
+          <p class="dash-page-sub" id="dash-office-name">—</p>
+        </div>
       </div>
-      <div class="topbar-avatar" id="dash-avatar">—</div>
+      <div class="dash-topbar-right">
+        <div class="dash-avatar" id="dash-avatar">—</div>
+      </div>
     </header>
 
     <!-- FILTERS -->
     <section class="filters-bar">
       <div class="filter-group">
         <label for="filter-search">Search</label>
-        <input type="text" id="filter-search" placeholder="Title, parties, notes…" />
+        <input type="text" id="filter-search" placeholder="Ref. no, title, parties…" />
       </div>
 
       <div class="filter-group">
@@ -103,6 +108,7 @@
   <!-- SCRIPTS -->
   <script src="../scripts/storage.js"></script>
   <script src="../scripts/file-storage.js"></script>
+  <script src="../scripts/sidebar-mobile.js"></script>
   <script src="../scripts/documents.js"></script>
 </body>
 </html>

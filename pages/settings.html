@@ -29,7 +29,7 @@
       <a href="#" data-nav="submit" class="sidebar-link">
         <span class="sidebar-icon">➕</span> Submit New
       </a>
-      <a href="settings.html" data-nav="settings" class="sidebar-link">
+      <a href="settings.html" data-nav="settings" class="sidebar-link active">
         <span class="sidebar-icon">⚙️</span> Settings
       </a>
     </nav>
@@ -41,11 +41,16 @@
   <!-- MAIN -->
   <main class="dashboard-main">
     <header class="dash-topbar">
-      <div>
-        <h2 class="dash-page-title">Settings</h2>
-        <p class="dash-page-sub">Manage your office profile and account.</p>
+      <div class="dash-topbar-left">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle menu">☰</button>
+        <div>
+          <h2 class="dash-page-title">Settings</h2>
+          <p class="dash-page-sub">Manage your office profile and account.</p>
+        </div>
       </div>
-      <div class="topbar-avatar" id="dash-avatar">—</div>
+      <div class="dash-topbar-right">
+        <div class="dash-avatar" id="dash-avatar">—</div>
+      </div>
     </header>
 
     <!-- OFFICE PROFILE -->
@@ -86,15 +91,15 @@
       <form id="password-form" class="settings-form">
         <div class="form-row">
           <label for="pwd-current">Current Password</label>
-          <input type="password" id="pwd-current" required />
+          <input type="password" id="pwd-current" required autocomplete="current-password" />
         </div>
         <div class="form-row">
           <label for="pwd-new">New Password</label>
-          <input type="password" id="pwd-new" required minlength="8" />
+          <input type="password" id="pwd-new" required minlength="8" autocomplete="new-password" />
         </div>
         <div class="form-row">
           <label for="pwd-confirm">Confirm New Password</label>
-          <input type="password" id="pwd-confirm" required minlength="8" />
+          <input type="password" id="pwd-confirm" required minlength="8" autocomplete="new-password" />
         </div>
 
         <div class="form-actions">
@@ -122,6 +127,7 @@
 
   <script src="../scripts/storage.js"></script>
   <script src="../scripts/file-storage.js"></script>
+  <script src="../scripts/sidebar-mobile.js"></script>
   <script src="../scripts/settings.js"></script>
 </body>
 </html>

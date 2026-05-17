@@ -13,7 +13,7 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <a href="index.html" class="nav-logo sidebar-logo">
+    <a href="../index.html" class="nav-logo sidebar-logo">
       <span class="logo-mark">D</span>
       <span class="logo-text">Daftarka</span>
     </a>
@@ -34,7 +34,7 @@
     <button class="btn-logout" id="logout-btn">
       <span>→</span> Log out
     </button>
-  </aside>       
+  </aside>
 
   <!-- MAIN CONTENT -->
   <main class="dashboard-main">
@@ -98,7 +98,7 @@
     <section class="doc-list-section">
       <div class="doc-list-header">
         <h2>Recent documents</h2>
-        <input type="text" class="doc-search" id="doc-search" placeholder="🔍  Search documents…" />
+        <input type="text" class="doc-search" id="doc-search" placeholder="🔍  Ref. no, title, parties…" />
       </div>
       <div id="doc-list-body">
         <!-- Populated by JS -->
@@ -115,6 +115,13 @@
         <button class="modal-close" id="modal-close">✕</button>
       </div>
       <form id="add-doc-form" novalidate>
+
+        <!-- Reference preview: shows the auto-generated ref this document will get -->
+        <div class="ref-preview-row">
+          <span class="ref-preview-label">Reference</span>
+          <span class="ref-preview-value" id="doc-ref-preview">DAF-2026-0001</span>
+        </div>
+
         <div class="form-group">
           <label for="doc-title">Document Title</label>
           <input type="text" id="doc-title" placeholder="e.g. Land Transfer Agreement" />
@@ -165,7 +172,7 @@
 
   <script src="../scripts/storage.js"></script>
   <script src="../scripts/file-storage.js"></script>
+  <script src="../scripts/sidebar-mobile.js"></script>
   <script src="../scripts/dashboard.js"></script>
-  
 </body>
 </html>
