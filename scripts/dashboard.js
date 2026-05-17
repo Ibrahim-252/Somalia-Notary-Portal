@@ -47,13 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'index.html';
   });
 
-  // --- SIDEBAR TOGGLE (mobile) ---
-  const sidebarToggle = document.getElementById('sidebar-toggle');
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener('click', () => {
-      document.querySelector('.sidebar').classList.toggle('open');
-    });
-  }
+  // // --- SIDEBAR TOGGLE (mobile) ---
+  // const sidebarToggle = document.getElementById('sidebar-toggle');
+  // if (sidebarToggle) {
+  //   sidebarToggle.addEventListener('click', () => {
+  //     document.querySelector('.sidebar').classList.toggle('open');
+  //   });
+  // }
 
   // ---- SIDEBAR ----
 
