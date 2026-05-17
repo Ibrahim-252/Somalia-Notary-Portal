@@ -11,35 +11,35 @@
 
   <link rel="stylesheet" href="../styles/style.css" />
 </head>
-<body class="dash-body">
+<body class="dashboard-page">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-logo">D</div>
-      <h1 class="brand-name">Daftarka</h1>
-    </div>
-
+    <a href="../index.html" class="nav-logo sidebar-logo">
+      <span class="logo-mark">D</span>
+      <span class="logo-text">Daftarka</span>
+    </a>
     <nav class="sidebar-nav">
-      <a href="dashboard.html" data-nav="overview" class="nav-link">
-        <span class="nav-icon">🏠</span><span>Overview</span>
+      <a href="dashboard.html" data-nav="overview" class="sidebar-link">
+        <span class="sidebar-icon">🏠</span> Overview
       </a>
-      <a href="documents.html" data-nav="documents" class="nav-link">
-        <span class="nav-icon">📄</span><span>Documents</span>
+      <a href="documents.html" data-nav="documents" class="sidebar-link">
+        <span class="sidebar-icon">📄</span> Documents
       </a>
-      <a href="#" data-nav="submit" class="nav-link">
-        <span class="nav-icon">➕</span><span>Submit New</span>
+      <a href="#" data-nav="submit" class="sidebar-link">
+        <span class="sidebar-icon">➕</span> Submit New
       </a>
-      <a href="settings.html" data-nav="settings" class="nav-link active">
-        <span class="nav-icon">⚙️</span><span>Settings</span>
+      <a href="settings.html" data-nav="settings" class="sidebar-link">
+        <span class="sidebar-icon">⚙️</span> Settings
       </a>
     </nav>
-
-    <button id="logout-btn" class="logout-btn">→ Log out</button>
+    <button class="btn-logout" id="logout-btn">
+      <span>→</span> Log out
+    </button>
   </aside>
 
   <!-- MAIN -->
-  <main class="dash-main">
+  <main class="dashboard-main">
     <header class="dash-topbar">
       <div>
         <h2 class="dash-page-title">Settings</h2>
