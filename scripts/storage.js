@@ -25,6 +25,10 @@ const Storage = (() => {
     return getOffices().find(o => o.email.toLowerCase() === email.toLowerCase()) || null;
   }
 
+  function findOfficeById(id) {
+    return getOffices().find(o => o.id === id) || null;
+  }
+
   function addOffice(officeData) {
     const offices = getOffices();
     const newOffice = {
@@ -39,6 +43,19 @@ const Storage = (() => {
     offices.push(newOffice);
     saveOffices(offices);
     return newOffice;
+  }
+
+  /**
+   * Updates an office record. Pass any subset of fields.
+   * Returns the updated office, or null if not found.
+   */
+  function updateOffice(officeId, updates) {
+    const offices = getOffices();
+    const i = offices.findIndex(o => o.id === officeId);
+    if (i === -1) return null;
+    offices[i] = { ...offices[i], ...updates };
+    saveOffices(offices);
+    return offices[i];
   }
 
   // ---- DOCUMENTS ----
@@ -65,13 +82,28 @@ const Storage = (() => {
       type:      docData.type,
       date:      docData.date,
       parties:   docData.parties,
-      notes:     docData.notes || '',
-      status:    'Pending',
+      notes:     docData.notes   || '',
+      status:    docData.status  || 'Pending',
+      hasFile:   !!docData.hasFile,
       createdAt: new Date().toISOString(),
     };
     docs.push(newDoc);
     saveDocuments(docs);
     return newDoc;
+  }
+
+  /**
+   * Updates a single document by id. Pass any subset of fields
+   * (e.g. { status: 'Verified', hasFile: true }).
+   * Returns the updated document, or null if not found.
+   */
+  function updateDocument(docId, updates) {
+    const docs = getDocuments();
+    const i = docs.findIndex(d => d.id === docId);
+    if (i === -1) return null;
+    docs[i] = { ...docs[i], ...updates };
+    saveDocuments(docs);
+    return docs[i];
   }
 
   // ---- SESSION ----
@@ -101,10 +133,13 @@ const Storage = (() => {
   return {
     getOffices,
     findOfficeByEmail,
+    findOfficeById,
     addOffice,
+    updateOffice,
     getDocuments,
     getDocumentsByOffice,
     addDocument,
+    updateDocument,
     setSession,
     getSession,
     clearSession,

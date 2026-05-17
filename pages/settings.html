@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — Daftarka</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../styles/style.css" />
+</head>
+<body class="dash-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">D</div>
+      <h1 class="brand-name">Daftarka</h1>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" data-nav="overview" class="nav-link">
+        <span class="nav-icon">🏠</span><span>Overview</span>
+      </a>
+      <a href="documents.html" data-nav="documents" class="nav-link">
+        <span class="nav-icon">📄</span><span>Documents</span>
+      </a>
+      <a href="#" data-nav="submit" class="nav-link">
+        <span class="nav-icon">➕</span><span>Submit New</span>
+      </a>
+      <a href="settings.html" data-nav="settings" class="nav-link active">
+        <span class="nav-icon">⚙️</span><span>Settings</span>
+      </a>
+    </nav>
+
+    <button id="logout-btn" class="logout-btn">→ Log out</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+    <header class="dash-topbar">
+      <div>
+        <h2 class="dash-page-title">Settings</h2>
+        <p class="dash-page-sub">Manage your office profile and account.</p>
+      </div>
+      <div class="topbar-avatar" id="dash-avatar">—</div>
+    </header>
+
+    <!-- OFFICE PROFILE -->
+    <section class="settings-card">
+      <h3 class="section-title">Office Profile</h3>
+      <p class="section-sub">These details show up on your documents and dashboard.</p>
+
+      <form id="profile-form" class="settings-form">
+        <div class="form-row">
+          <label for="set-office-name">Office Name</label>
+          <input type="text" id="set-office-name" required />
+        </div>
+        <div class="form-row">
+          <label for="set-contact">Contact Person</label>
+          <input type="text" id="set-contact" required />
+        </div>
+        <div class="form-row">
+          <label for="set-email">Email</label>
+          <input type="email" id="set-email" required />
+        </div>
+        <div class="form-row">
+          <label for="set-phone">Phone Number</label>
+          <input type="tel" id="set-phone" required />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Save changes</button>
+          <span id="profile-msg" class="form-msg"></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- CHANGE PASSWORD -->
+    <section class="settings-card">
+      <h3 class="section-title">Change Password</h3>
+      <p class="section-sub">Use a strong password — at least 8 characters.</p>
+
+      <form id="password-form" class="settings-form">
+        <div class="form-row">
+          <label for="pwd-current">Current Password</label>
+          <input type="password" id="pwd-current" required />
+        </div>
+        <div class="form-row">
+          <label for="pwd-new">New Password</label>
+          <input type="password" id="pwd-new" required minlength="8" />
+        </div>
+        <div class="form-row">
+          <label for="pwd-confirm">Confirm New Password</label>
+          <input type="password" id="pwd-confirm" required minlength="8" />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Update password</button>
+          <span id="password-msg" class="form-msg"></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- DANGER ZONE -->
+    <section class="settings-card danger-zone">
+      <h3 class="section-title">Account</h3>
+      <p class="section-sub">Sign out of this device, or learn how to clear local data.</p>
+
+      <div class="danger-actions">
+        <button id="signout-btn" class="btn-secondary">Sign out</button>
+        <button id="clear-data-btn" class="btn-danger">Clear all local data</button>
+      </div>
+      <p class="danger-note">
+        Clearing local data removes all documents and PDFs stored in this browser.
+        This action cannot be undone.
+      </p>
+    </section>
+  </main>
+
+  <script src="../scripts/storage.js"></script>
+  <script src="../scripts/file-storage.js"></script>
+  <script src="../scripts/settings.js"></script>
+</body>
+</html>

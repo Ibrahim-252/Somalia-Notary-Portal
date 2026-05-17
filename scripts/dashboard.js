@@ -1,6 +1,12 @@
 /**
  * dashboard.js
  * Handles the office dashboard: greeting, stats, document list, and new doc modal.
+ *
+ * Updated:
+ *  - Sidebar links (Documents, Submit New, Settings) now navigate properly
+ *  - PDF upload field in the modal — files go to IndexedDB (see file-storage.js)
+ *  - When a PDF is uploaded, status flips to 'Verified' automatically
+ *  - Document rows show a "View PDF" link if a file is attached
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- LOAD STATS & DOCS ---
   refreshDashboard();
+
+  // --- SIDEBAR NAVIGATION ---
+  wireSidebar();
 
   // --- ADD DOCUMENT BUTTON ---
   document.getElementById('add-doc-btn').addEventListener('click', openModal);
@@ -38,9 +47,47 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- SIDEBAR TOGGLE (mobile) ---
-  document.getElementById('sidebar-toggle').addEventListener('click', () => {
-    document.querySelector('.sidebar').classList.toggle('open');
-  });
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+      document.querySelector('.sidebar').classList.toggle('open');
+    });
+  }
+
+  // ---- SIDEBAR ----
+
+  function wireSidebar() {
+    // Match by data-nav attribute on each sidebar link.
+    // Add these in dashboard.html:
+    //   <a data-nav="overview">Overview</a>
+    //   <a data-nav="documents">Documents</a>
+    //   <a data-nav="submit">Submit New</a>
+    //   <a data-nav="settings">Settings</a>
+
+    const links = document.querySelectorAll('[data-nav]');
+    links.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = link.getAttribute('data-nav');
+
+        switch (target) {
+          case 'overview':
+            // Already here — just scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            break;
+          case 'documents':
+            window.location.href = 'documents.html';
+            break;
+          case 'submit':
+            openModal();
+            break;
+          case 'settings':
+            window.location.href = 'settings.html';
+            break;
+        }
+      });
+    });
+  }
 
   // ---- POPULATE TOPBAR ----
 
@@ -49,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('dash-greeting').textContent   = greeting + ' 👋';
     document.getElementById('dash-office-name').textContent = office.officeName;
 
-    // Avatar: first letter of office name
     const initials = office.officeName.charAt(0).toUpperCase();
     document.getElementById('dash-avatar').textContent = initials;
   }
@@ -118,6 +164,11 @@ document.addEventListener('DOMContentLoaded', () => {
             ${doc.status}
           </span>
         </td>
+        <td>
+          ${doc.hasFile
+            ? `<button class="link-btn" data-view-pdf="${doc.id}">📄 View PDF</button>`
+            : `<button class="link-btn" data-upload-pdf="${doc.id}">⬆ Upload PDF</button>`}
+        </td>
       </tr>
     `).join('');
 
@@ -131,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <th>Parties</th>
               <th>Date</th>
               <th>Status</th>
+              <th>File</th>
             </tr>
           </thead>
           <tbody>
@@ -139,12 +191,49 @@ document.addEventListener('DOMContentLoaded', () => {
         </table>
       </div>
     `;
+
+    // Wire the View PDF and Upload PDF buttons
+    container.querySelectorAll('[data-view-pdf]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        FileStorage.openFile(btn.dataset.viewPdf);
+      });
+    });
+
+    container.querySelectorAll('[data-upload-pdf]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerInlineUpload(btn.dataset.uploadPdf);
+      });
+    });
+  }
+
+  // ---- INLINE UPLOAD (for rows without a PDF yet) ----
+
+  function triggerInlineUpload(docId) {
+    const input = document.createElement('input');
+    input.type   = 'file';
+    input.accept = 'application/pdf';
+    input.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.type !== 'application/pdf') {
+        alert('Please upload a PDF file.');
+        return;
+      }
+      try {
+        await FileStorage.saveFile(docId, file);
+        Storage.updateDocument(docId, { hasFile: true, status: 'Verified' });
+        refreshDashboard();
+      } catch (err) {
+        console.error(err);
+        alert('Could not save the file. Please try again.');
+      }
+    });
+    input.click();
   }
 
   // ---- MODAL ----
 
   function openModal() {
-    // Set today's date as default
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('doc-date').value = today;
     document.getElementById('modal-overlay').style.display = 'flex';
@@ -160,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ---- ADD DOCUMENT ----
 
-  function handleAddDoc(e) {
+  async function handleAddDoc(e) {
     e.preventDefault();
     clearModalErrors();
 
@@ -169,6 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const date    = document.getElementById('doc-date').value;
     const parties = document.getElementById('doc-parties').value.trim();
     const notes   = document.getElementById('doc-notes').value.trim();
+    const fileInput = document.getElementById('doc-file');
+    const file = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
 
     let hasError = false;
 
@@ -188,14 +279,37 @@ document.addEventListener('DOMContentLoaded', () => {
       showModalError('doc-parties', 'Please enter the parties involved.');
       hasError = true;
     }
+    if (file && file.type !== 'application/pdf') {
+      showModalError('doc-file', 'Only PDF files are accepted.');
+      hasError = true;
+    }
 
     if (hasError) return;
 
-    Storage.addDocument(office.id, { title, type, date, parties, notes });
+    // Create the document record. If a PDF was uploaded, mark as Verified.
+    const docPayload = {
+      title, type, date, parties, notes,
+      hasFile: !!file,
+      status: file ? 'Verified' : 'Pending'
+    };
+
+    const newDoc = Storage.addDocument(office.id, docPayload);
+
+    // Save the PDF to IndexedDB if one was provided
+    if (file && newDoc && newDoc.id) {
+      try {
+        await FileStorage.saveFile(newDoc.id, file);
+      } catch (err) {
+        console.error('File save failed:', err);
+        alert('Document saved, but the PDF could not be attached. You can upload it again from the table.');
+        Storage.updateDocument(newDoc.id, { hasFile: false, status: 'Pending' });
+      }
+    }
+
     closeModal();
     refreshDashboard();
 
-    // Flash the stats section to show update
+    // Flash the stats section
     const statsEl = document.querySelector('.dash-stats');
     statsEl.style.transition = 'opacity .2s';
     statsEl.style.opacity = '.5';

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documents — Daftarka</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../styles/style.css" />
+</head>
+<body class="dash-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">D</div>
+      <h1 class="brand-name">Daftarka</h1>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" data-nav="overview" class="nav-link">
+        <span class="nav-icon">🏠</span><span>Overview</span>
+      </a>
+      <a href="documents.html" data-nav="documents" class="nav-link active">
+        <span class="nav-icon">📄</span><span>Documents</span>
+      </a>
+      <a href="#" data-nav="submit" class="nav-link">
+        <span class="nav-icon">➕</span><span>Submit New</span>
+      </a>
+      <a href="settings.html" data-nav="settings" class="nav-link">
+        <span class="nav-icon">⚙️</span><span>Settings</span>
+      </a>
+    </nav>
+
+    <button id="logout-btn" class="logout-btn">→ Log out</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+    <header class="dash-topbar">
+      <div>
+        <h2 class="dash-page-title">All Documents</h2>
+        <p class="dash-page-sub" id="dash-office-name">—</p>
+      </div>
+      <div class="topbar-avatar" id="dash-avatar">—</div>
+    </header>
+
+    <!-- FILTERS -->
+    <section class="filters-bar">
+      <div class="filter-group">
+        <label for="filter-search">Search</label>
+        <input type="text" id="filter-search" placeholder="Title, parties, notes…" />
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-type">Type</label>
+        <select id="filter-type">
+          <option value="">All types</option>
+          <option>Land Transfer</option>
+          <option>Marriage Certificate</option>
+          <option>Power of Attorney</option>
+          <option>Affidavit</option>
+          <option>Sale Agreement</option>
+          <option>Will</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-status">Status</label>
+        <select id="filter-status">
+          <option value="">All</option>
+          <option>Verified</option>
+          <option>Pending</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-from">From</label>
+        <input type="date" id="filter-from" />
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-to">To</label>
+        <input type="date" id="filter-to" />
+      </div>
+
+      <button id="filter-reset" class="btn-secondary">Reset</button>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="dash-section">
+      <div class="section-header">
+        <h3 class="section-title">Results <span id="result-count" class="result-count">(0)</span></h3>
+      </div>
+      <div id="doc-list-body"></div>
+    </section>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script src="../scripts/storage.js"></script>
+  <script src="../scripts/file-storage.js"></script>
+  <script src="../scripts/documents.js"></script>
+</body>
+</html>

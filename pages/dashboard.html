@@ -18,16 +18,16 @@
       <span class="logo-text">Daftarka</span>
     </a>
     <nav class="sidebar-nav">
-      <a href="dashboard.html" class="sidebar-link active">
+      <a href="dashboard.html" data-nav="overview" class="sidebar-link active">
         <span class="sidebar-icon">🏠</span> Overview
       </a>
-      <a href="#" class="sidebar-link">
+      <a href="documents.html" data-nav="documents" class="sidebar-link">
         <span class="sidebar-icon">📄</span> Documents
       </a>
-      <a href="#" class="sidebar-link">
+      <a href="#" data-nav="submit" class="sidebar-link">
         <span class="sidebar-icon">➕</span> Submit New
       </a>
-      <a href="#" class="sidebar-link">
+      <a href="settings.html" data-nav="settings" class="sidebar-link">
         <span class="sidebar-icon">⚙️</span> Settings
       </a>
     </nav>
@@ -149,6 +149,12 @@
           <label for="doc-notes">Notes <span class="optional">(optional)</span></label>
           <textarea id="doc-notes" rows="3" placeholder="Any additional information…"></textarea>
         </div>
+        <div class="form-group">
+          <label for="doc-file">Attach Stamped PDF <span class="optional">(optional)</span></label>
+          <input type="file" id="doc-file" accept="application/pdf" />
+          <p class="field-hint">Uploading a stamped PDF marks this document as Verified.</p>
+          <span class="field-error" id="err-doc-file"></span>
+        </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" id="modal-cancel">Cancel</button>
           <button type="submit" class="btn btn-primary">Submit document</button>
@@ -158,6 +164,7 @@
   </div>
 
   <script src="../scripts/storage.js"></script>
+  <script src="../scripts/file-storage.js"></script>
   <script src="../scripts/dashboard.js"></script>
 </body>
 </html>
